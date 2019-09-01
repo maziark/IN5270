@@ -1,0 +1,99 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{Problem 1}
+\author{Maziar Kosarifar}
+\date{August 2019}
+
+\begin{document}
+
+\maketitle
+
+\section*{Problem 1: Use linear/quadratic functions for verification}
+Consider the ODE problem
+$$u" + \omega^2 u = f(t), u(0) = I, u'(0) = V, t \in (0, T]$$
+Discretize the equation according to $[D_t D_t u + \omega^2 u = f]^n$
+    \subsection*{a) Derive the equation for the first time step}
+        \begin{equation} \label{eq:1}
+            {[D_t D_t u]}^n = \frac{u^{n+1} - 2u^n + u^{n-1}}{{\Delta t}^2}
+        \end{equation}
+        And then we get:
+        \begin{equation}\label{eq:2}
+            \frac{u^{n+1} - 2u^n + u^{n-1}}{{\Delta t}^2} + \omega^2 u = f(t)
+        \end{equation}
+        Solving equation (\ref{eq:2}) for $u^{n+1}$ we have:
+        \begin{equation}
+            u^{n+1} = (f(t_n) - \omega^2 u^n) \Delta t^2 + 2u^n - u^{n-1}
+        \end{equation}
+        Setting $n = 0$, to find $u^1$:
+        \begin{equation}
+            u^{1} = (f(t_0) - \omega^2 u^0) \Delta t^2 + 2u^0 - u^{-1}
+        \end{equation}
+        To find an expression to represent $u^{n-1}$ we can use $[D_{2t}u =  V]^0$, knowing that $u'(0) = V$:
+        \begin{equation}
+            \frac{u^{1} - u^{-1}}{2\Delta t} = V
+        \end{equation}
+        Solving the equation:
+        \begin{equation}
+            u^{-1} = u^{1} - 2V\Delta t
+        \end{equation}
+        Substituting $u^{-1} = u^{1} - 2V\Delta t$, and, $u(0) = I$ in equation (4), we get:
+        \begin{equation}
+            u^{1} = (f(t_0) - \omega^2 I) \Delta t^2 + 2I - u^{1} + 2V\Delta t
+        \end{equation}
+        Simplifying the last equation we get:
+        \begin{equation}
+            u^{1} = (f(t_0) - \omega^2 I) \frac{\Delta t^2}{2} + V\Delta t + I
+        \end{equation}
+    
+    \newpage
+    \subsection*{b) For verification purposes, we use the method of manufactured solutions (MMS) with the choice of $u_e(x,t)=ct+d$. Find restrictions on c and d from the initial conditions. Compute the corresponding source term f by term. Show that $[D_t D_t t]^n=0$ and use the fact that the $D_t D_t$ operator is linear, $[D_t D_t(ct + d)]^n = c[D_t D_t t]n+[D_t D_t d]n = 0$, to show that $u_e$ is also a perfect solution of the discrete equations.}
+    
+    Based on the initial conditions given $u(0) = I$, and $u'(0) = V$.
+    For $t = 0$:
+    \begin{equation}
+        u_e(0) = c\times0 + d =  d = u(0) = I
+    \end{equation}
+    \begin{equation}\label{eq:10}
+        \frac{d}{dt}u_e(t) = u_e(t) = c, u_e'(0) = e'(0) = V 
+    \end{equation}
+    Therefore we get:  $d = I$, and $c = V$
+    To find an expression for $f$, we use the definition: $u" + \omega^2 u = f(t)$
+    \newline
+    Based on the result of the equation (\ref{eq:10})$\frac{d}{dt}u'_e(t) = \frac{d}{dt}c = 0$
+    
+    \begin{equation}
+        u" + \omega^2 u = 0 + \omega^2 (ct + d) = \omega^2 (Vt + I) = f(t) 
+    \end{equation}
+    
+    It us easy to show that $[D_t D_t t]^n = 0$, if we set $u = t$ in the equation (\ref{eq:1})
+    
+    \begin{equation}
+            {[D_t D_t t]}^n = \frac{t^{n+1} - 2t^n + t^{n-1}}{{\Delta t}^2} = \frac{(t^{n+1} - t^n) - (t^n - t^{n-1})}{{\Delta t}^2} = \frac{\Delta t - \Delta t}{{\Delta t}^2} = 0
+    \end{equation}
+    
+    Knowing that Operator $D_t D_t$ is linear, we can show that $u_e = Vt + I$ is also a perfect solution of the discrete equation, having $\omega^2 (Vt + I) = f$
+    \begin{equation}
+        [D_t D_t u + \omega^2u -f]^n = 0
+    \end{equation}
+    
+    \begin{equation}
+        [D_t D_t (Vt + I) + \omega^2 (Vt + I) - \omega^2 (Vt + I)]^n = [D_t D_t (Vt + I)]^n = V[D_t D_t t]^n + [D_t D_t I]^n = 0
+    \end{equation}
+    
+    \newpage
+    \subsection*{ d) The purpose now is to choose a quadratic function $u_e=b t^2 + ct + d$ as exact solution. Extend the sympy code above with a function quadratic for fitting f and checking if the discrete equations are fulfilled. (The function is very similar to linear.)}
+    
+    Running the program with the quadratic function would produce zero residual for both first step, and general equation. Therefore we can say that the quadratic solution is an exact solution.
+    
+    
+    \subsection*{e) Will a polynomial of degree three fulfill the discrete equations?}
+    
+    Running the program with a polynomial of a degree three (poly d3), would produce 0 for the general form, but it is not zero for the first step ($-a*dt^3$). Which means that it won't fulfill the discrete equations.
+    
+    
+    \subsection*{f) Write a nose test for checking that the quadratic solution is computed to correctly}
+    
+    The function nose-test in the python code, would print out the maximum absolute error, of the quadratic function. I wasn't sure how to initialize the variables, so I set them all to one. 
+    
+\end{document}
